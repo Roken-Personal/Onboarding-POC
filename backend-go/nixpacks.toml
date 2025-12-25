@@ -1,0 +1,12 @@
+[phases.setup]
+nixPkgs = ["go_1_21"]
+
+[phases.install]
+cmds = ["go mod download"]
+
+[phases.build]
+cmds = ["go mod tidy", "go mod download", "go build -o onboarding-backend"]
+
+[start]
+cmd = "./onboarding-backend"
+
