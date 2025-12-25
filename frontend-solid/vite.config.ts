@@ -12,6 +12,15 @@ export default defineConfig({
       },
     },
   },
+  preview: {
+    port: 3000,
+    host: true,
+    allowedHosts: [
+      'onboarding-frontend-poc.up.railway.app',
+      '.railway.app',
+      'localhost',
+    ],
+  },
   build: {
     outDir: 'dist',
   },
