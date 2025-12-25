@@ -3,11 +3,13 @@ FROM golang:1.21-alpine AS builder
 
 WORKDIR /app
 
-# Copy go mod files
+# Copy go mod files (go.sum may not exist yet, that's OK)
 COPY go.mod ./
+COPY go.sum* ./
 
-# Download dependencies and generate go.sum
-RUN go mod tidy && go mod download
+# Download dependencies and generate/update go.sum
+RUN go mod tidy
+RUN go mod download
 
 # Copy source code
 COPY . .
