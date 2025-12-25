@@ -9,7 +9,6 @@ import (
 	"onboarding-backend/internal/config"
 	"onboarding-backend/internal/database"
 	"onboarding-backend/internal/handlers"
-	"onboarding-backend/internal/models"
 )
 
 func main() {
