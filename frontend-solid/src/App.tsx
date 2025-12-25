@@ -1,10 +1,10 @@
-import { Routes, Route } from '@solidjs/router';
+import { Route, Routes } from '@solidjs/router';
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
 import OnboardingForm from './components/OnboardingForm';
 import RequestDetail from './components/RequestDetail';
 
-function App() {
+export default function App() {
   return (
     <Layout>
       <Routes>
@@ -15,6 +15,4 @@ function App() {
     </Layout>
   );
 }
-
-export default App;
 
