@@ -23,6 +23,16 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'solid-vendor': ['solid-js', '@solidjs/router'],
+          'axios-vendor': ['axios'],
+        },
+      },
+    },
+    minify: 'esbuild', // esbuild is faster and already available
+    chunkSizeWarningLimit: 1000,
   },
 });
 

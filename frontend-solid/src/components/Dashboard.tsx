@@ -1,28 +1,48 @@
-import { createSignal, createResource, For, Show } from 'solid-js';
+import { createSignal, createResource, For, Show, createEffect, onCleanup } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
-import apiClient from '../api/client';
+import apiClient, { getCached } from '../api/client';
 import type { OnboardingRequest, ApiResponse, PaginatedResponse } from '../types';
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [statusFilter, setStatusFilter] = createSignal<string>('');
   const [searchTerm, setSearchTerm] = createSignal<string>('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = createSignal<string>('');
+
+  // Debounce search term to reduce API calls
+  let debounceTimer: ReturnType<typeof setTimeout>;
+  createEffect(() => {
+    const term = searchTerm();
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      setDebouncedSearchTerm(term);
+    }, 300);
+  });
+
+  onCleanup(() => clearTimeout(debounceTimer));
 
   const fetchRequests = async () => {
     const params: any = {};
     if (statusFilter()) params.status = statusFilter();
-    if (searchTerm()) params.search = searchTerm();
+    if (debouncedSearchTerm()) params.search = debouncedSearchTerm();
 
-    const response = await apiClient.get<PaginatedResponse<OnboardingRequest>>(
-      '/api/onboarding',
-      { params }
-    );
-    return response.data;
+    // Build cache key from params
+    const cacheKey = `/api/onboarding?${new URLSearchParams(params).toString()}`;
+
+    return getCached(cacheKey, async () => {
+      const response = await apiClient.get<PaginatedResponse<OnboardingRequest>>(
+        '/api/onboarding',
+        { params }
+      );
+      return response.data;
+    });
   };
 
   const fetchStats = async () => {
-    const response = await apiClient.get<ApiResponse<any>>('/api/onboarding/stats');
-    return response.data;
+    return getCached('/api/onboarding/stats', async () => {
+      const response = await apiClient.get<ApiResponse<any>>('/api/onboarding/stats');
+      return response.data;
+    });
   };
 
   const [requestsData] = createResource(fetchRequests);
@@ -186,6 +206,10 @@ export default function Dashboard() {
                       <td class="px-6 py-4 whitespace-nowrap text-sm">
                         <button
                           onClick={() => navigate(`/request/${request.id}`)}
+                          onMouseEnter={() => {
+                            // Prefetch RequestDetail component on hover
+                            import('../components/RequestDetail');
+                          }}
                           class="text-blue-600 hover:text-blue-900"
                         >
                           View

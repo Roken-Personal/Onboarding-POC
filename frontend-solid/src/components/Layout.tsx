@@ -6,6 +6,11 @@ interface LayoutProps {
 }
 
 export default function Layout(props: LayoutProps) {
+  // Prefetch components on hover for faster navigation
+  const prefetchOnboardingForm = () => {
+    import('../components/OnboardingForm');
+  };
+
   return (
     <div class="min-h-screen bg-gray-50">
       <nav class="bg-white shadow-sm border-b">
@@ -27,6 +32,7 @@ export default function Layout(props: LayoutProps) {
                 </A>
                 <A
                   href="/new"
+                  onMouseEnter={prefetchOnboardingForm}
                   class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                   activeClass="border-blue-500 text-gray-900"
                 >

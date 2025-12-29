@@ -1,8 +1,11 @@
+import { lazy } from 'solid-js';
 import { Route, Routes } from '@solidjs/router';
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
-import OnboardingForm from './components/OnboardingForm';
-import RequestDetail from './components/RequestDetail';
+
+// Lazy load routes for code splitting
+const OnboardingForm = lazy(() => import('./components/OnboardingForm'));
+const RequestDetail = lazy(() => import('./components/RequestDetail'));
 
 export default function App() {
   return (

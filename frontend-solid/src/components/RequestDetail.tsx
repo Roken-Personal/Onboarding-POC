@@ -1,16 +1,19 @@
 import { createResource, Show, For } from 'solid-js';
 import { useParams } from '@solidjs/router';
-import apiClient from '../api/client';
+import apiClient, { getCached } from '../api/client';
 import type { OnboardingRequest, ApiResponse } from '../types';
 
 export default function RequestDetail() {
   const params = useParams();
 
   const fetchRequest = async () => {
-    const response = await apiClient.get<ApiResponse<OnboardingRequest>>(
-      `/api/onboarding/${params.id}`
-    );
-    return response.data;
+    const cacheKey = `/api/onboarding/${params.id}`;
+    return getCached(cacheKey, async () => {
+      const response = await apiClient.get<ApiResponse<OnboardingRequest>>(
+        `/api/onboarding/${params.id}`
+      );
+      return response.data;
+    });
   };
 
   const [requestData] = createResource(fetchRequest);
